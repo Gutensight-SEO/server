@@ -1,13 +1,14 @@
 {
   "name": "api",
   "version": "1.0.0",
-  "main": "./dist/app/config/cluster.js",
+  "main": "./dist/app/setup/server.js",
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
     "dev": "nodemon",
-    "build": "tsc && tsc-alias",
-    "start": "node ."
+    "build": "NODE_OPTIONS='--max-old-space-size=1536' tsc && tsc-alias",
+    "start": "NODE_OPTIONS='--max-old-space-size=1536' node ./dist/app/setup/server.js",
+    "postinstall": "npm run build"
   },
   "keywords": [],
   "author": "Abdulhakeem Muhammed",
