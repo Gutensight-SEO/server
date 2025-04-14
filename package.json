@@ -7,8 +7,7 @@
     "test:watch": "jest --watch",
     "dev": "nodemon",
     "build": "NODE_OPTIONS='--max-old-space-size=1536' tsc && tsc-alias",
-    "start": "NODE_OPTIONS='--max-old-space-size=1536' node ./dist/app/setup/server.js",
-    "postinstall": "npm run build"
+    "start": "NODE_OPTIONS='--max-old-space-size=1536' node ./dist/app/setup/server.js"
   },
   "keywords": [],
   "author": "Abdulhakeem Muhammed",
