@@ -11,17 +11,35 @@ interface RequestWithApiKey extends Request {
   apiKey: string;
 }
 
-export const decrementQuota = async (req: RequestWithApiKey, res: Response, next: NextFunction) => {
+/**
+ * Middleware to decrement the quota for the API key.
+ * It checks if the API key is valid and decrements the remaining requests.
+ * 
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @param {NextFunction} next - The next middleware function.
+ * @returns {Promise<void>} - Returns a response or calls next().
+ */
+export const decrementQuota = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
+    const requestWithApiKey = req as RequestWithApiKey;
+
     const pagesLength: number = req.body.length || 1;
 
-    const key_hash: string = encryptApiKey(req.apiKey);
+    const key_hash: string = encryptApiKey(requestWithApiKey.apiKey);
 
     const foundSubscription = await SubscriptionModel.findOne({
       apiKey: key_hash,
     }) as Subscription | null;
 
-    if (!foundSubscription) return res.status(403).json({ error: 'Invalid API' });
+    if (!foundSubscription) {
+      res.status(403).json({ error: 'Invalid API' });
+      return;
+    }
 
     const decrementedSubscriptionQouta = await SubscriptionModel.findByIdAndUpdate(
       foundSubscription._id,
@@ -36,14 +54,22 @@ export const decrementQuota = async (req: RequestWithApiKey, res: Response, next
     );
 
     if (decrementedSubscriptionQouta) {
-      await ApiKeyModel.findOne(
-        { apiKey: req.apiKey },
-        { $inc: { requests_remaining: -pagesLength } }
+      const foundApiKeyRecord = await ApiKeyModel.findOne(
+        { apiKey: requestWithApiKey.apiKey },
       );
+      if (foundApiKeyRecord) {
+        foundApiKeyRecord.requests_remaining -= pagesLength;
+        await foundApiKeyRecord.save();
+      }
+      
       next();
+      return;
+    } else {
+      res.status(400).json({ error: 'error occured' });
+      return;
     }
-    return;
   } catch (err) {
     res.status(500).json({ error: 'Failed to update quota' });
+    return;
   }
 };
