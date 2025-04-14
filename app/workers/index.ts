@@ -21,24 +21,23 @@ const userWorker = (serviceName: string, params = null) => {
     })
 };
 
-const postWorker = (serviceName: string, params = null) => {
-    return new Promise((resolve, reject) => {
-        const worker = new Worker("./post.worker.ts", {
-            workerData: {
-                serviceName, params
-            }
-        });
+// const postWorker = (serviceName: string, params = null) => {
+//     return new Promise((resolve, reject) => {
+//         const worker = new Worker("./post.worker.ts", {
+//             workerData: {
+//                 serviceName, params
+//             }
+//         });
 
-        worker.on("message", (data) => {
-            resolve(data);
-        })
+//         worker.on("message", (data) => {
+//             resolve(data);
+//         })
 
-        worker.on("error", (error) => {
-            reject(error);
-        })
-    })
-}
-
+//         worker.on("error", (error) => {
+//             reject(error);
+//         })
+//     })
+// }
 
 const analysisWorker = (cb: any) => {
     return new Promise((resolve, reject) => {
@@ -64,6 +63,6 @@ const analysisWorker = (cb: any) => {
 
 export {
     userWorker,
-    postWorker,
+    // postWorker,
     analysisWorker
 };

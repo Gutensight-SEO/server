@@ -6,15 +6,15 @@ import multer from "multer";
 
 // specify the storage
 const storage = multer.diskStorage({
-    destination: (_req, _file, cb) => {
+    destination: (_req: any, _file: any, cb: (arg0: null, arg1: string) => void) => {
         cb(null, "../../public/uploads");
     },
-    filename: (_req, file, cb) => {
+    filename: (_req: any, file: { originalname: string; }, cb: (arg0: null, arg1: string) => void) => {
         cb(null, new Date().toISOString().replace(/:/g, "-") + file.originalname);
     }
 });
 
-const fileFilter: multer.Options["fileFilter"] = (_req, file, callback) => {
+const fileFilter: multer.Options["fileFilter"] = (_req: any, file: { mimetype: string; }, callback: (arg0: null, arg1: boolean) => void) => {
     if (
         file.mimetype === "image/png" ||
         file.mimetype === "image/jpg" ||

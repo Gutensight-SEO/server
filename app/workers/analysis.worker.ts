@@ -4,7 +4,7 @@ import { parentPort, workerData } from "worker_threads";
 
 
 let analysis: any = null;
-const worker = async (cb) => {
+const worker = async (cb: any) => {
     analysis = await Promise.resolve(cb);
 }
 worker(workerData.cb);

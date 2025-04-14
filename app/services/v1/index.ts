@@ -12,7 +12,9 @@ import * as subscriptionPlanService from "./subscriptionPlan.service";
 // import * as postService from "./post.service";
 
 
-export const v1Services = {
+export const v1Services: { 
+    [key: string]: (...args: any[]) => any; 
+  } = {
     ...authService,
     ...userService,
     // ...postService,
