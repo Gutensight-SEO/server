@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { ActivityLog } from '../models/activityLog.model';
+import ActivityLog from "../models/activityLog.model"
+
 
 export const activityLogger = (action: string) => {
   return async (req: Request, res: Response, next: NextFunction) => {

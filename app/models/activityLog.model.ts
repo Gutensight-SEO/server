@@ -9,4 +9,6 @@ const activityLogSchema = new Schema({
   timestamp: { type: Date, default: Date.now }
 });
 
-export default mongoose.model('ActivityLog', activityLogSchema);
+const ActivityLog = mongoose.model('ActivityLog', activityLogSchema);
+
+export default ActivityLog;
