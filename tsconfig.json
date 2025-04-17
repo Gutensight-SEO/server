@@ -14,8 +14,7 @@
     "paths": {
       "@/*": ["./app/*"]
     },
-    "typeRoots": ["./node_modules/@types", "./app/types"],
-    "types": [],
+    "typeRoots": ["./node_modules/@types", "./app/types/"],
     "moduleResolution": "node"
   },
   "include": ["app/**/*"],

@@ -1,6 +1,6 @@
 /** @format */
 
-import { Router, Request } from 'express';
+import { Router, Request, Response } from 'express';
 import { authenticate, decrementQuota } from '@/middlewares';
 import { analysisWorker } from '@/workers';
 import { Logs } from '@/monitoring';
@@ -33,7 +33,7 @@ router.post(
   '/batch',
   authenticate,
   decrementQuota,
-  async (req, res) => {
+  async (req: Request, res: Response) => {
     try {
       const pages = req.body.pages;
 
@@ -68,7 +68,7 @@ router.post(
   '/',
   authenticate,
   decrementQuota,
-  async (req, res) => {
+  async (req: Request, res: Response) => {
     try {
       if (!req.body || !req.body.page) {
         res.status(400).json({ error: "Invalid request body" });
