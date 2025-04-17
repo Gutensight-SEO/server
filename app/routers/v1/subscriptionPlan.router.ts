@@ -2,7 +2,7 @@
 
 import { Router } from "express";
 import { SubscriptionPlanController } from "@/controllers";
-import { adminMiddleware, authorizationMiddleware, ZodValidation } from "@/middlewares";
+import { adminMiddleware, ZodValidation } from "@/middlewares";
 import { ZodSchema } from "@/schemas";
 
 const subscriptionPlanRouter = Router();

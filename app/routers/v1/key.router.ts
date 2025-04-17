@@ -36,7 +36,6 @@
 
 //     const newKey = await ApiKeyModel.create({
 //       key_hash: hashedKey,
-//       secret_hash: hashedSecret,
 //       requests_remaining: maxRequests,
 //       user_id: userId,
 //     });
@@ -73,7 +72,6 @@
 
 //     const deletedKey = await ApiKeyModel.findOneAndDelete({
 //       key_hash: hashedKey,
-//       secret_hash: hashedSecret,
 //     });
 
 //     if (deletedKey) {
@@ -106,7 +104,7 @@
 //     const hashedSecret = await hashApiKey(apiSecret);
 
 //     const updatedKey = await ApiKeyModel.findOneAndUpdate(
-//       { key_hash: hashedKey, secret_hash: hashedSecret },
+//       { key_hash: hashedKey},
 //       { requests_remaining: newQuota },
 //       { new: true }
 //     );

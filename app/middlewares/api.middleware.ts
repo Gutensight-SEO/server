@@ -6,8 +6,6 @@ import { Request, Response, NextFunction } from 'express';
 interface ApiKeyRequest extends Request {
   apiKey?: {
     key_hash: string;
-    secret_hash: string;
-    requests_remaining: number;
   };
 }
 
@@ -17,19 +15,16 @@ export const authenticate = async (
   next: NextFunction
 ): Promise<void> => {
   const apiKeyHeader: string | undefined = req.headers['x-api-key'] as string | undefined;
-  const secretKeyHeader: string | undefined = req.headers['x-api-secret'] as string | undefined;
-  if (!apiKeyHeader || !secretKeyHeader) {
-    res.status(401).json({ error: 'API key and secret key required' });
+  if (!apiKeyHeader) {
+    res.status(401).json({ error: 'API key is required' });
     return;
   }
 
   try {
     const hashedKey: string = encryptApiKey(apiKeyHeader);
-    const hashedSecret: string = encryptApiKey(secretKeyHeader);
 
     const apiKeyDoc = await ApiKeyModel.findOne({ 
         key_hash: hashedKey,
-        secret_hash: hashedSecret
      });
     if (!apiKeyDoc) {
       res.status(403).json({ error: 'Invalid API || Secret key' });

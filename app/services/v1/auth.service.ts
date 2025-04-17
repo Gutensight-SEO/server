@@ -63,7 +63,6 @@ export const register = async ({
             const apiSecret = crypto.randomBytes(32).toString('hex');
             // hash api keys 
             const key_hash = encryptApiKey(apiKey);
-            const secret_hash = encryptApiKey(apiSecret);
             
             // Calculate dates
             const startDate = new Date();
@@ -74,7 +73,6 @@ export const register = async ({
                 userId: newUser._id,
                 subscriptionPlanId: subscriptionPlan._id,
                 apiKey: key_hash,
-                apiSecret: secret_hash,
                 startDate,
                 endDate,
                 totalApiRequests: subscriptionPlan.apiRequestQuota,
@@ -91,7 +89,6 @@ export const register = async ({
                     subscription_name: subscriptionPlan.name,
                     subscription_id: String(subscription._id),
                     key_hash,
-                    secret_hash,
                     user_id: String(newUser._id),
                     requests_remaining: subscriptionPlan.apiRequestQuota,
                     created_at: new Date(),

@@ -67,7 +67,6 @@ export const subscribe = async (
             
             // Hash for lookups
             const key_hash = encryptApiKey(apiKey);
-            const secret_hash = encryptApiKey(apiSecret);
             
             // Calculate dates
             const startDate = new Date();
@@ -88,13 +87,11 @@ export const subscribe = async (
 
             if (subscription) {
                 const key_hash = encryptApiKey(apiKey);
-                const secret_hash = encryptApiKey(apiSecret); 
 
                 const savedApiKeys = await ApiKeyModel.create({
                     subscription_name: subscriptionPlan.name,
                     subscription_id: subscription._id,
                     key_hash,
-                    secret_hash,
                     userId,
                     requests_remaining: subscriptionPlan.apiRequestQuota,
                     created_at: new Date(),

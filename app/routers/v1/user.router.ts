@@ -9,9 +9,7 @@ const userRouter = Router();
 userRouter.get("/all", adminMiddleware, UserController.getUsers);
 // get user
 userRouter.get("/", UserController.getUser);
-// update user - remove authorizationMiddleware since we already have authMiddleware in v1Router
 userRouter.patch("/", UserController.updateUser);
-// delete user - remove authorizationMiddleware for the same reason
 userRouter.delete("/", UserController.deleteUser);
 
 export default userRouter;

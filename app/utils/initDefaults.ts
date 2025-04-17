@@ -124,7 +124,6 @@ export async function initializeDefaults() {
                 const apiSecret = crypto.randomBytes(32).toString('hex');
                 // encrypt api keys 
                 const key_hash = encryptApiKey(apiKey);
-                const secret_hash = encryptApiKey(apiSecret);
                 
                 // Calculate dates
                 const startDate = new Date();
@@ -135,7 +134,6 @@ export async function initializeDefaults() {
                     userId: admin._id,
                     subscriptionPlanId: subscriptionPlan._id,
                     apiKey: key_hash,
-                    apiSecret: secret_hash,
                     startDate,
                     endDate,
                     totalApiRequests: subscriptionPlan.apiRequestQuota,
@@ -152,7 +150,6 @@ export async function initializeDefaults() {
                         subscription_name: subscriptionPlan.name,
                         subscription_id: String(subscription._id),
                         key_hash,
-                        secret_hash,
                         user_id: String(admin._id),
                         requests_remaining: subscriptionPlan.apiRequestQuota,
                         created_at: new Date(),

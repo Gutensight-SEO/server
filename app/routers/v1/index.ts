@@ -12,7 +12,7 @@ import analysisRouter from "./analysis.router";
 import subscriptionPlanRouter from "./subscriptionPlan.router";
 // import paymentRouter from "./payment.router";
 import subscriptionRouter from "./subscription.router";
-import { authMiddleware, authorizationMiddleware } from "@/middlewares";
+import { authMiddleware } from "@/middlewares";
 import { Router } from "express";
 
 
