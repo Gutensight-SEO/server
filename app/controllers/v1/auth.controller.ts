@@ -73,18 +73,20 @@ const loginUserHandler = asyncHandler(
                 } else {
                     // Set both tokens in HTTP-only cookies
                     res.cookie('accessToken', result["accessToken"], {
-                        httpOnly: false, // Allow JS access
-                        secure: process.env.NODE_ENV === 'production',
-                        sameSite: 'strict',
+                        httpOnly: false, // Allow JS
+                        secure: process.env.NODE_ENV === 'Production', // Required for Partitioned cookies
+                        sameSite: process.env.NODE_ENV === 'Production' ? 'none' : 'strict',
                         path: '/',
-                        maxAge: 15 * 60 * 1000 // 15 minutes
+                        maxAge: 15 * 60 * 1000, // 15 minutes
+                        partitioned: true 
                     });
-
+                    
                     res.cookie('refreshToken', result["refreshToken"], {
-                        httpOnly: true,
-                        secure: process.env.NODE_ENV === 'production',
-                        sameSite: 'strict',
-                        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === 'Production',
+                    sameSite: process.env.NODE_ENV === 'Production' ? 'none' : 'strict',
+                    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+                    partitioned: true 
                     });
 
                     res.status(STATUS_CODES.SUCCESS.OK).json({
