@@ -23,7 +23,7 @@ const runServer = async () => {
 
         // app server
         app.listen(port, async () => {
-            Logs.success(`Server running in ${process.env.DEV_MODE ? "Development" : "Production"} Mode on port -`, port);
+            Logs.success(`Server running in ${process.env.NODE_ENV ? "Development" : "Production"} Mode on port -`, port);
         
             // connect db
             await connectDB();

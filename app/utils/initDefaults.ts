@@ -58,7 +58,7 @@ const subscriptionPlans = [
         durationDays: 365,
         isActive: true,
         isFreetier: false,
-        paymentLink: process.env.DEV_MODE! === "production" ? process.env.PAYMENT_LINK_BASIC_LIVE! : process.env.PAYMENT_LINK_BASIC_TEST!,
+        paymentLink: process.env.NODE_ENV! === "production" ? process.env.PAYMENT_LINK_BASIC_LIVE! : process.env.PAYMENT_LINK_BASIC_TEST!,
     },
     {
         name: "Starter Plan",
@@ -68,7 +68,7 @@ const subscriptionPlans = [
         durationDays: 365,
         isActive: true,
         isFreetier: false,
-        paymentLink: process.env.DEV_MODE! === "production" ? process.env.PAYMENT_LINK_STARTER_LIVE! : process.env.PAYMENT_LINK_STARTER_TEST!,
+        paymentLink: process.env.NODE_ENV! === "production" ? process.env.PAYMENT_LINK_STARTER_LIVE! : process.env.PAYMENT_LINK_STARTER_TEST!,
     },
     {
         name: "Corporate Plan",
@@ -78,7 +78,7 @@ const subscriptionPlans = [
         durationDays: 365,
         isActive: true,
         isFreetier: false,
-        paymentLink: process.env.DEV_MODE! === "production" ? process.env.PAYMENT_LINK_CORPORATE_LIVE! : process.env.PAYMENT_LINK_CORPORATE_TEST!,
+        paymentLink: process.env.NODE_ENV! === "production" ? process.env.PAYMENT_LINK_CORPORATE_LIVE! : process.env.PAYMENT_LINK_CORPORATE_TEST!,
     },
 ];
 
