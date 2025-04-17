@@ -50,7 +50,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 })
 // local metrics
 app.use(
-    responseTime((req: Request, res: Response, time) => {
+    responseTime((req: Request, res: Response, time: Number) => {
         if (req?.route?.path) {
             Metrics.restResponseTimeHistogram.observe(
                 {

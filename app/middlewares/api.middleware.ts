@@ -6,7 +6,10 @@ import { Request, Response, NextFunction } from 'express';
 interface ApiKeyRequest extends Request {
   apiKey?: {
     key_hash: string;
-  };
+  },
+  headers?: {
+    'x-api-key': string
+  }
 }
 
 export const authenticate = async (
