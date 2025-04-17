@@ -13,9 +13,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./app/*"]
-    },
-    "typeRoots": ["./node_modules/@types", "./src/@types"],
-    "moduleResolution": "node"
+    }
   },
   "include": ["app/**/*"],
   "exclude": ["node_modules", "dist"]
