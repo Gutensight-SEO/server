@@ -14,7 +14,9 @@
     "paths": {
       "@/*": ["./app/*"]
     },
-    "typeRoots": ["./node_modules/@types", "./src/@types"]
+    "typeRoots": ["./node_modules/@types", "./src/@types"],
+    "types": ["express", "morgan", "jsonwebtoken", "lodash", "bcryptjs", "gravatar", "multer", "swagger-jsdoc"],
+    "moduleResolution": "node"
   },
   "include": ["app/**/*"],
   "exclude": ["node_modules", "dist"]
