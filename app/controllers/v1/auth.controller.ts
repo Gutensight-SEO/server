@@ -74,8 +74,8 @@ const loginUserHandler = asyncHandler(
                     // Set both tokens in HTTP-only cookies
                     res.cookie('accessToken', result["accessToken"], {
                         httpOnly: false, // Allow JS
-                        secure: process.env.NODE_ENV === 'Production', // Required for Partitioned cookies
-                        sameSite: process.env.NODE_ENV === 'Production' ? 'none' : 'strict',
+                        secure: process.env.NODE_ENV === 'production', // Required for Partitioned cookies
+                        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
                         path: '/',
                         maxAge: 15 * 60 * 1000, // 15 minutes
                         partitioned: true 
@@ -83,8 +83,8 @@ const loginUserHandler = asyncHandler(
                     
                     res.cookie('refreshToken', result["refreshToken"], {
                     httpOnly: true,
-                    secure: process.env.NODE_ENV === 'Production',
-                    sameSite: process.env.NODE_ENV === 'Production' ? 'none' : 'strict',
+                    secure: process.env.NODE_ENV === 'production',
+                    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
                     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
                     partitioned: true 
                     });

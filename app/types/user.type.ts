@@ -2,7 +2,6 @@
 
 
 export type CreateUserRequestType = {
-    // id?: string,
     firstname: string,
     lastname: string,
     username: string,
@@ -12,7 +11,6 @@ export type CreateUserRequestType = {
 }
 
 export type LoginUserRequestType = {
-    // id?: string,
     detail: string,
     password: string
 }
