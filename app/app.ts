@@ -50,7 +50,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 })
 // local metrics
 app.use(
-    responseTime((req: Request, res: Response, time: Number) => {
+    responseTime((req: Request, res: Response, time: number) => { 
         if (req?.route?.path) {
             Metrics.restResponseTimeHistogram.observe(
                 {
@@ -58,7 +58,7 @@ app.use(
                     route: req.route.path,
                     status_code: req.statusCode,
                 },
-                time * 1000
+                time * 1000 // Now valid as 'time' is primitive number
             )
         }
     })
