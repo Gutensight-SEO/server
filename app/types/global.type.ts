@@ -13,10 +13,10 @@ declare global {
                 role: string 
             };
             logger?: any;
-            apiKey?: string;
-            headers?: IncomingHttpHeaders & {
-                'x-api-key'?: string;
-            };
+            // apiKey?: string;
+            // headers?: IncomingHttpHeaders & {
+            //     'x-api-key'?: string;
+            // };
         }
     }
 }
