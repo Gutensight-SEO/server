@@ -95,7 +95,9 @@ const loginUserHandler = asyncHandler(
                         success: true,
                         message: "Login Successful",
                         data: {
-                            user: result["user"]
+                            user: result["user"],
+                            accessToken: result["accessToken"], // Added for JWT (cookie not working in production)
+                            refreshToken: result["refreshToken"] // Added for JWT (cookie not working in production)
                         },
                     });
 
