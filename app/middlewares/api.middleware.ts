@@ -3,17 +3,8 @@ import { encryptApiKey } from '@/utils';
 import { Request, Response, NextFunction } from 'express';
 // import { validateApiKey } from '../utils/auth.js';
 
-interface ApiKeyRequest extends Request {
-  apiKey?: {
-    key_hash: string;
-  },
-  headers?: {
-    'x-api-key': string
-  }
-}
-
 export const authenticate = async (
-  req: ApiKeyRequest,
+  req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {

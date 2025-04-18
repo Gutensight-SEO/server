@@ -8,32 +8,31 @@ import { Logs } from '@/monitoring';
 const router = Router();
 const ML_SERVER_URL = process.env.ML_SERVER_URL;
 
-// // Define custom request interface
-// interface RequestWithApiKey extends Request {
-//   apiKey: string;
-//   body: {
-//     pages?: any[];
-//     page?: {
-//       content: {
-//         title: string;
-//         description: string;
-//         headers: any;
-//         keywords: string[];
-//         url: string;
-//         body: string;
-//         mobile_friendly: boolean;
-//         structured_data: any;
-//         status_codes: any;
-//       };
-//     };
-//   };
-// }
+// Define custom request interface
+interface RequestWithApiKey extends Request {
+  body: {
+    pages?: any[];
+    page?: {
+      content: {
+        title: string;
+        description: string;
+        headers: any;
+        keywords: string[];
+        url: string;
+        body: string;
+        mobile_friendly: boolean;
+        structured_data: any;
+        status_codes: any;
+      };
+    };
+  };
+}
 
 router.post(
   '/batch',
   authenticate,
   decrementQuota,
-  async (req: Request, res: Response) => {
+  async (req: RequestWithApiKey, res: Response) => {
     try {
       const pages = req.body.pages;
 
@@ -68,7 +67,7 @@ router.post(
   '/',
   authenticate,
   decrementQuota,
-  async (req: Request, res: Response) => {
+  async (req: RequestWithApiKey, res: Response) => {
     try {
       if (!req.body || !req.body.page) {
         res.status(400).json({ error: "Invalid request body" });

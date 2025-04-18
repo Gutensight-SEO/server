@@ -1,5 +1,8 @@
 /** @format */
 
+import { IncomingHttpHeaders } from 'http';
+
+
 export {};
 
 declare global {
@@ -10,6 +13,10 @@ declare global {
                 role: string 
             };
             logger?: any;
+            apiKey?: string;
+            headers?: IncomingHttpHeaders & {
+                'x-api-key'?: string;
+            };
         }
     }
 }
