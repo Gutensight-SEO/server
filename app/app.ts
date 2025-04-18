@@ -66,6 +66,13 @@ app.use(
 
 app.set('trust proxy', 1); // Trust first proxy
 
+// Example Express.js middleware
+app.use((req: Request, res: Response, next: NextFunction) => {
+    res.header('Access-Control-Allow-Origin', process.env.CLIENT_URL!);
+    res.header('Access-Control-Allow-Credentials', 'true');
+    next();
+});
+
 // configure routes
 app.use("/api", router);
 
