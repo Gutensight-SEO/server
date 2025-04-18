@@ -81,7 +81,6 @@ const loginUserHandler = asyncHandler(
                         path: '/',
                         maxAge: 15 * 60 * 1000, // 15 minutes
                         partitioned: true,
-                        domain: isProduction && 'https://gutensight-seo.netlify.app', 
                     });
                     
                     res.cookie('refreshToken', result["refreshToken"], {
