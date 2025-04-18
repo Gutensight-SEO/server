@@ -98,12 +98,16 @@ const loginUserHandler = asyncHandler(
                             user: result["user"]
                         },
                     });
+
+                    console.log("RES object:", {res})
+                    return;
                 }
             } else {
                 res.status(STATUS_CODES.CLIENT_ERRORS.BAD_REQUEST).json({
                     success: false,
                     message: "Login Failed"
                 })
+                return;
             }            
         } catch (error) {
             Logs.error("Login User Error:", error)
@@ -111,6 +115,7 @@ const loginUserHandler = asyncHandler(
                 success: false,
                 message: "Server Error! Try Again Later"
             })
+            return;
         }
     }
 )
