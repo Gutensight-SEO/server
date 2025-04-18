@@ -71,20 +71,23 @@ const loginUserHandler = asyncHandler(
                     });
                     return;
                 } else {
+                    const isProduction = process.env.NODE_ENV === 'production'
+
                     // Set both tokens in HTTP-only cookies
                     res.cookie('accessToken', result["accessToken"], {
                         httpOnly: false, // Allow JS
-                        secure: process.env.NODE_ENV === 'production', // Required for Partitioned cookies
-                        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+                        secure: isProduction, // Required for Partitioned cookies
+                        sameSite: isProduction ? 'none' : 'strict',
                         path: '/',
                         maxAge: 15 * 60 * 1000, // 15 minutes
-                        partitioned: true 
+                        partitioned: true,
+                        domain: isProduction && 'https://gutensight-seo.netlify.app', 
                     });
                     
                     res.cookie('refreshToken', result["refreshToken"], {
                     httpOnly: true,
-                    secure: process.env.NODE_ENV === 'production',
-                    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+                    secure: isProduction,
+                    sameSite: isProduction ? 'none' : 'strict',
                     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
                     partitioned: true 
                     });

@@ -32,7 +32,7 @@ const logger = Logger();
 
 // configure app level middleware
 app.use(cors({
-    origin: [process.env.CLIENT_URL!],
+    origin: process.env.CLIENT_URL!,
     credentials: true,
 }));
 app.use(express.json());
@@ -63,6 +63,8 @@ app.use(
         }
     })
 );
+
+app.set('trust proxy', 1); // Trust first proxy
 
 // configure routes
 app.use("/api", router);
