@@ -29,7 +29,7 @@
     "paths": {
       "@/*": ["./app/*"]
     },
-    "types": ["node", "express"],
+    "types": ["node"],
     "typeRoots": ["./node_modules/@types", "./app/types"]
   },
   "ts-node": {
