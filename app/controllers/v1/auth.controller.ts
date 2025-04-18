@@ -88,7 +88,7 @@ const loginUserHandler = asyncHandler(
                     secure: isProduction,
                     sameSite: isProduction ? 'none' : 'strict',
                     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-                    partitioned: true 
+                    // partitioned: true 
                     });
 
                     res.status(STATUS_CODES.SUCCESS.OK).json({
