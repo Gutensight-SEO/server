@@ -63,6 +63,8 @@ const loginUserHandler = asyncHandler(
 
             const result = await v1Services.login({ detail, password });
 
+            console.log("LOGIN RESULT:", {result})
+
             if (result !== null) {
                 if ('errMessage' in result) {
                     res.status(result['statusCode']).json({

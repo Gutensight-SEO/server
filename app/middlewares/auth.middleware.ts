@@ -30,7 +30,7 @@ export const authMiddleware = async (
             return;
         }
     
-        const accessToken = authHeader.split(" ")[1];
+        const accessToken = authHeader && authHeader.split(" ")[1];
     
         if (!accessToken) {
             res.status(STATUS_CODES.CLIENT_ERRORS.UNAUTHORIZED).json({

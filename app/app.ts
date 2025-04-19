@@ -32,15 +32,14 @@ const logger = Logger();
 
 // configure app level middleware
 app.use(cors({
-    origin: process.env.CLIENT_URL!,
+    origin: [process.env.CLIENT_URL!, 'http://localhost:5173', 'https://gutensight-seo.netlify.app'],
     credentials: true,
 }));
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 app.use(helmet());
 // app.use(xss());
 app.use(mongoSanitize());
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 app.use(morgan("dev"));
 app.use(routerMiddleware);
 app.use(errorHandlerMiddleware);
