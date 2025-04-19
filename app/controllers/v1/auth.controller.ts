@@ -71,25 +71,25 @@ const loginUserHandler = asyncHandler(
                     });
                     return;
                 } else {
-                    const isProduction = process.env.NODE_ENV === 'production'
+                    // const isProduction = process.env.NODE_ENV === 'production';
 
-                    // Set both tokens in HTTP-only cookies
-                    res.cookie('accessToken', result["accessToken"], {
-                        httpOnly: false, // Allow JS
-                        secure: isProduction, // Required for Partitioned cookies
-                        sameSite: isProduction ? 'none' : 'strict',
-                        path: '/',
-                        maxAge: 15 * 60 * 1000, // 15 minutes
-                        partitioned: true,
-                    });
+                    // // Set both tokens in HTTP-only cookies
+                    // res.cookie('accessToken', result["accessToken"], {
+                    //     httpOnly: false, // Allow JS
+                    //     secure: isProduction, // Required for Partitioned cookies
+                    //     sameSite: isProduction ? 'none' : 'strict',
+                    //     path: '/',
+                    //     maxAge: 15 * 60 * 1000, // 15 minutes
+                    //     partitioned: true,
+                    // });
                     
-                    res.cookie('refreshToken', result["refreshToken"], {
-                    httpOnly: true,
-                    secure: isProduction,
-                    sameSite: isProduction ? 'none' : 'strict',
-                    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-                    partitioned: true 
-                    });
+                    // res.cookie('refreshToken', result["refreshToken"], {
+                    // httpOnly: true,
+                    // secure: isProduction,
+                    // sameSite: isProduction ? 'none' : 'strict',
+                    // maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+                    // partitioned: true 
+                    // });
 
                     res.status(STATUS_CODES.SUCCESS.OK).json({
                         success: true,
