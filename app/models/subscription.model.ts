@@ -4,7 +4,6 @@ export interface SubscriptionDocument extends Document {
   userId: Schema.Types.ObjectId;
   subscriptionPlanId: Schema.Types.ObjectId;
   apiKey: string;
-  apiSecret: string;
   status: 'active' | 'paused' | 'expired' | 'cancelled';
   startDate: Date;
   endDate: Date;
@@ -19,7 +18,6 @@ const subscriptionSchema = new Schema({
   userId: { type: String, required: true, ref: 'User' },
   subscriptionPlanId: { type: String, required: true, ref: 'SubscriptionPlan' },
   apiKey: { type: String, required: true, unique: true },
-  apiSecret: { type: String, required: true },
   status: { 
     type: String, 
     required: true,

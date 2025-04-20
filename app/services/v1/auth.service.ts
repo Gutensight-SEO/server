@@ -60,7 +60,7 @@ export const register = async ({
 
             // Generate API credentials
             const apiKey = crypto.randomBytes(16).toString('hex');
-            const apiSecret = crypto.randomBytes(32).toString('hex');
+            // const apiSecret = crypto.randomBytes(32).toString('hex');
             // hash api keys 
             const key_hash = encryptApiKey(apiKey);
             

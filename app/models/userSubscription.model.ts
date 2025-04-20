@@ -4,7 +4,6 @@ const userSubscriptionSchema = new Schema({
   userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   subscriptionId: { type: Schema.Types.ObjectId, ref: 'Subscription', required: true },
   apiKey: { type: String, required: true },
-  apiSecret: { type: String, required: true },
   startDate: { type: Date, required: true },
   endDate: { type: Date, required: true },
   requestsUsed: { type: Number, default: 0 },

@@ -5,7 +5,6 @@ import mongoose, { Document, Schema } from "mongoose";
 export interface ApiKeyDocument extends Document {
     subscription_name: string;
     subscription_id: Schema.Types.ObjectId;
-    
     key_hash: string;
     user_id: string;
     requests_remaining: number;

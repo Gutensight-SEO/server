@@ -9,7 +9,6 @@ const payload = {
         userId: string({ required_error: "User ID is required" }),
         subscriptionPlanId: string({ required_error: "Subscription Plan ID is required" }),
         apiKey: string({ required_error: "API Key is required" }),
-        apiSecret: string({ required_error: "API Secret is required" }),
         status: zodEnum(subscriptionStatus, {
             required_error: "Status is required",
             invalid_type_error: "Status must be active, paused, expired, or cancelled"

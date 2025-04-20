@@ -121,8 +121,7 @@ export async function initializeDefaults() {
     
                 // Generate API credentials
                 const apiKey = crypto.randomBytes(16).toString('hex');
-                const apiSecret = crypto.randomBytes(32).toString('hex');
-                // encrypt api keys 
+                // encrypt api key
                 const key_hash = encryptApiKey(apiKey);
                 
                 // Calculate dates
