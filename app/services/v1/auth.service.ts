@@ -18,6 +18,7 @@ export const register = async ({
     role
 }: ZodSchema.UserSchema.CreateUserInput["body"]): Promise<UserDocument | object | null> => {
     try {
+        console.log("===================REGISTER SERVICE=========================================")
         const foundUsername = await UserModel.find({ username });
         if (foundUsername.length > 0) {
             return {
@@ -42,8 +43,11 @@ export const register = async ({
             password: hashPassword,
             role: role
         })
+
+        console.log("CREATED NEW USER")
         
         if (newUser) {
+            console.log("New user created!")
             // create free subscription
             const subscriptionPlan = await SubscriptionPlanModel.findOne({ 
                 name: "Free Tier",
@@ -51,6 +55,7 @@ export const register = async ({
              });
 
             if (!subscriptionPlan) {
+                console.log("Subscription plan not found!")
                 await UserModel.findByIdAndDelete(newUser._id);
                 return {
                     statusCode: STATUS_CODES.CLIENT_ERRORS.NOT_FOUND,
@@ -81,6 +86,7 @@ export const register = async ({
             });
 
             if (subscription) {
+                console.log("Subscription created!")
                 // add free tier subscripton to user record
                 newUser.subscription.push(String(subscriptionPlan._id));
                 await newUser.save();
@@ -94,13 +100,15 @@ export const register = async ({
                     created_at: new Date(),
                 });
 
-                if (savedApiKeys)
+                if (savedApiKeys) {
+                    console.log("API Saved!")
                     return {
                         statusCode: STATUS_CODES.SUCCESS.CREATED,
                         message: "Registration successful",
                         data: omit(newUser.toJSON(), "password", "__v"),
                     };
-                else {
+                } else {
+                    console.log("SOMETHING WENT WRONG, REVERTING...")
                     await UserModel.findByIdAndDelete(newUser._id);
                     await SubscriptionModel.findByIdAndDelete(subscription._id);
 
@@ -110,6 +118,7 @@ export const register = async ({
                     };
                 }
             } else {
+                console.log("USER NOT SUBSCRIBED. DELETING CREATED USER...")
                 await UserModel.findByIdAndDelete(newUser._id);
 
                 return {
@@ -117,9 +126,8 @@ export const register = async ({
                     errMessage: "Registration Failed",
                 };
             }
-
-            
         } else {
+            console.log("USER not CREATED!")
             return {
                 statusCode: STATUS_CODES.CLIENT_ERRORS.BAD_REQUEST,
                 errMessage: "Registration Failed",

@@ -17,6 +17,7 @@ req: Request<{}, {}, ZodSchema.UserSchema.CreateUserInput["body"]>,
 res: Response
 ) => {
     try {
+        console.log("=======REGISTER CONTROLLER======")
         const error = await Validators.ValidateUser(req.body);
         if (error) {
             res.status(STATUS_CODES.CLIENT_ERRORS.BAD_REQUEST).json({
