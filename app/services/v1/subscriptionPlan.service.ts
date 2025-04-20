@@ -143,13 +143,11 @@ export const deleteSubscriptionPlan = async (
 //         }
 
 //         const apiKey = crypto.randomBytes(16).toString('hex');
-//         const apiSecret = crypto.randomBytes(32).toString('hex');
 
 //         const userSubscription = await UserSubscription.create({
 //             userId,
 //             subscriptionId,
 //             apiKey,
-//             apiSecret,
 //             startDate: new Date(),
 //             endDate: new Date(Date.now() + subscription.durationDays * 24 * 60 * 60 * 1000),
 //             totalRequests: subscription.apiRequestQuota,

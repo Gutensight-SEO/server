@@ -59,11 +59,9 @@ export const subscribe = async (
         } else if (verifiedPayment) {
             // Generate API credentials
             const apiKey = generateApiKey();
-            const apiSecret = generateApiKey(48); // Longer secret
             
             // Encrypt for storage
             const encryptedKey = encryptApiKey(apiKey);
-            const encryptedSecret = encryptApiKey(apiSecret);
             
             // Hash for lookups
             const key_hash = encryptApiKey(apiKey);
@@ -77,7 +75,6 @@ export const subscribe = async (
                 userId,
                 subscriptionPlanId,
                 apiKey: encryptedKey,
-                apiSecret: encryptedSecret,
                 startDate,
                 endDate,
                 totalApiRequests: subscriptionPlan.apiRequestQuota,
@@ -137,7 +134,6 @@ export const getSubscriptionDetails = async (userId: string, subscriptionId: str
 
         // Only try to decrypt if both keys exist
         const apiKey = subscription.apiKey ? decryptApiKey(subscription.apiKey) : '';
-        const apiSecret = subscription.apiSecret ? decryptApiKey(subscription.apiSecret) : '';
 
         return {
             statusCode: STATUS_CODES.SUCCESS.OK,
@@ -156,7 +152,6 @@ export const getSubscriptionDetails = async (userId: string, subscriptionId: str
                 },
                 keys: {
                     apiKey,
-                    apiSecret
                 }
             }
         };
@@ -180,7 +175,7 @@ export const checkSubscription = async (userId: string, subscriptionId: string) 
 
         return {
             statusCode: STATUS_CODES.SUCCESS.OK,
-            data: omit(subscription.toJSON(), ["apiKey", "apiSecret", "__v"])
+            data: omit(subscription.toJSON(), ["apiKey", "__v"])
         };
     } catch (error) {
         Logs.error("Check Subscription Error:", error);
@@ -212,7 +207,7 @@ export const pauseSubscription = async (
         return {
             statusCode: STATUS_CODES.SUCCESS.OK,
             message: "Subscription paused successfully",
-            data: omit(subscription.toJSON(), ["apiKey", "apiSecret", "__v"])
+            data: omit(subscription.toJSON(), ["apiKey", "__v"])
         };
     } catch (error) {
         Logs.error("Pause Subscription Error:", error);
@@ -235,7 +230,7 @@ export const getUserSubscriptions = async (userId: string, activeOnly = false) =
         // console.log("USER SUBS:", subscriptions)
 
         if (subscriptions.length > 0) {
-            return subscriptions.map(sub => omit(sub.toJSON(), ["apiKey", "apiSecret", "__v"]));
+            return subscriptions.map(sub => omit(sub.toJSON(), ["apiKey", "__v"]));
         } else {
             return {
                 statusCode: STATUS_CODES.CLIENT_ERRORS.NOT_FOUND,
