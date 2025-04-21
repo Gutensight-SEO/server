@@ -8,7 +8,7 @@ import commentRouter from "./comment.router";
 import notificationRouter from "./notification.router";
 import streamingRouter from "./streaming.router";
 // import apiKeyRouter from "./key.router";
-// import analysisRouter from "./analysis.router";
+import analysisRouter from "./analysis.router";
 import subscriptionPlanRouter from "./subscriptionPlan.router";
 // import paymentRouter from "./payment.router";
 import subscriptionRouter from "./subscription.router";
@@ -27,7 +27,7 @@ v1Router.use("/user", authMiddleware, userRouter);
 v1Router.use("/comment", authMiddleware, commentRouter);
 v1Router.use("/notification", authMiddleware, notificationRouter);
 v1Router.use("/streaming", streamingRouter)
-// v1Router.use("/analyze", authMiddleware, analysisRouter);
+v1Router.use("/analyze", analysisRouter);
 v1Router.use("/subscription-plan", authMiddleware, subscriptionPlanRouter)
 v1Router.use("/subscription", authMiddleware, subscriptionRouter);
 // v1Router.use("/payment", authMiddleware, paymentRouter);

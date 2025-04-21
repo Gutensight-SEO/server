@@ -1,14 +1,10 @@
 import { ApiKeyModel, SubscriptionModel } from '@/models';
+import { RequestWithApiKey } from '@/routers/v1/analysis.router';
 import { encryptApiKey } from '@/utils';
 import { Request, Response, NextFunction } from 'express';
 
 interface Subscription {
   _id: string;
-}
-
-// Define custom request interface
-interface RequestWithApiKey extends Request {
-  apiKey: string;
 }
 
 /**
@@ -27,10 +23,15 @@ export const decrementQuota = async (
 ): Promise<void> => {
   try {
     const requestWithApiKey = req as RequestWithApiKey;
+    console.log("API KEY:", requestWithApiKey.body.apiKey);
+    if (!requestWithApiKey.body.apiKey) {
+      res.status(400).json({ error: 'Missing API Key' });
+      return;
+    }
 
     const pagesLength: number = req.body.length || 1;
 
-    const key_hash: string = encryptApiKey(requestWithApiKey.apiKey);
+    const key_hash: string = encryptApiKey(requestWithApiKey.body.apiKey);
 
     const foundSubscription = await SubscriptionModel.findOne({
       apiKey: key_hash,
@@ -55,7 +56,7 @@ export const decrementQuota = async (
 
     if (decrementedSubscriptionQouta) {
       const foundApiKeyRecord = await ApiKeyModel.findOne(
-        { apiKey: requestWithApiKey.apiKey },
+        { apiKey: requestWithApiKey.body.apiKey },
       );
       if (foundApiKeyRecord) {
         foundApiKeyRecord.requests_remaining -= pagesLength;
