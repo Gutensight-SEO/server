@@ -1,11 +1,11 @@
 import { ApiKeyModel, SubscriptionModel } from '@/models';
 import { RequestWithApiKey } from '@/routers/v1/analysis.router';
-import { encryptApiKey } from '@/utils';
+import { hashApiKey } from '@/utils';
 import { Request, Response, NextFunction } from 'express';
 
-interface Subscription {
-  _id: string;
-}
+// interface Subscription {
+//   _id: string;
+// }
 
 /**
  * Middleware to decrement the quota for the API key.
@@ -31,14 +31,21 @@ export const decrementQuota = async (
 
     const pagesLength: number = req.body.length || 1;
 
-    const key_hash: string = encryptApiKey(requestWithApiKey.body.apiKey);
+    const key_hash: string = hashApiKey(requestWithApiKey.body.apiKey);
 
     const foundSubscription = await SubscriptionModel.findOne({
-      apiKey: key_hash,
-    }) as Subscription | null;
+      apiKeyHash: key_hash,
+    }) // as Subscription | null;
+
+    console.log("FOUND SUBSCRIPTION:", foundSubscription)
 
     if (!foundSubscription) {
-      res.status(403).json({ error: 'Invalid API' });
+      res.status(404).json({ error: 'Invalid API' });
+      return;
+    }
+
+    if (foundSubscription.remainingApiRequests < pagesLength) {
+      res.status(403).json({ error: 'Quota Exceeded' });
       return;
     }
 
@@ -56,7 +63,7 @@ export const decrementQuota = async (
 
     if (decrementedSubscriptionQouta) {
       const foundApiKeyRecord = await ApiKeyModel.findOne(
-        { apiKey: requestWithApiKey.body.apiKey },
+        { key_hash },
       );
       if (foundApiKeyRecord) {
         foundApiKeyRecord.requests_remaining -= pagesLength;
