@@ -23,9 +23,9 @@ export const decrementQuota = async (
 ): Promise<void> => {
   try {
     const requestWithApiKey = req as RequestWithApiKey;
-    console.log("API KEY:", requestWithApiKey.body.apiKey);
+    // console.log("API KEY:", requestWithApiKey.body.apiKey);
     if (!requestWithApiKey.body.apiKey) {
-      res.status(400).json({ error: 'Missing API Key' });
+      res.status(401).json({ error: 'Missing API Key' });
       return;
     }
 
@@ -35,33 +35,28 @@ export const decrementQuota = async (
 
     const foundSubscription = await SubscriptionModel.findOne({
       apiKeyHash: key_hash,
-    }) // as Subscription | null;
+    }) 
 
-    console.log("FOUND SUBSCRIPTION:", foundSubscription)
+    // console.log("FOUND SUBSCRIPTION:", foundSubscription)
 
     if (!foundSubscription) {
-      res.status(404).json({ error: 'Invalid API' });
+      // console.log("NO FOUND SUBSCRIPTION")
+      res.status(401).json({ error: 'Invalid API key' });
       return;
     }
 
     if (foundSubscription.remainingApiRequests < pagesLength) {
-      res.status(403).json({ error: 'Quota Exceeded' });
+      // console.log("QUOTA EXCEEDED")
+      res.status(402).json({ error: 'Quota Exceeded' });
       return;
     }
 
-    const decrementedSubscriptionQouta = await SubscriptionModel.findByIdAndUpdate(
-      foundSubscription._id,
-      [
-        { 
-          $inc: { remainingApiRequests: -pagesLength },
-        },
-        { 
-          $inc: { usedApiRequests: +pagesLength }
-        }
-      ]
-    );
+    foundSubscription.remainingApiRequests -= pagesLength;
+    foundSubscription.usedApiRequests += pagesLength;
 
-    if (decrementedSubscriptionQouta) {
+    const decrementedSubscriptionQuota = await foundSubscription.save(); 
+
+    if (decrementedSubscriptionQuota) {
       const foundApiKeyRecord = await ApiKeyModel.findOne(
         { key_hash },
       );
@@ -73,10 +68,12 @@ export const decrementQuota = async (
       next();
       return;
     } else {
-      res.status(400).json({ error: 'error occured' });
+      // console.log("400 ERR:", "no decrementedSubscriptionQuota")
+      res.status(500).json({ error: 'error occured' });
       return;
     }
   } catch (err) {
+    // console.log("500 ERR:", {err})
     res.status(500).json({ error: 'Failed to update quota' });
     return;
   }

@@ -32,7 +32,7 @@ export interface RequestWithApiKey extends Request {
 }
 
 router.post(
-  '/batch',
+  '/pages',
   decrementQuota,
   async (req: RequestWithApiKey, res: Response) => {
     try {
@@ -40,31 +40,36 @@ router.post(
 
       try {
         if (!req.body.apiKey) {
-          res.status(400).json({ error: "Missing API Key" });
+          res.status(401).json({ error: "Missing API Key" });
           return;
         }
         if (!pages || !Array.isArray(pages)) {
           res.status(400).json({ error: "Invalid request body" });
           return;
         }
-        console.log("Pages:", pages);
+        // console.log("Pages:", pages);
 
-        const response = await analysisWorker(fetch(
+        const response: any = await analysisWorker(fetch(
           `${ML_SERVER_URL}/analyze/batch`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              // ...(req.header('x-api-key') && { 'x-api-key': req.header('x-api-key') }),
             },
-            body: JSON.stringify({ pages })
+            body: JSON.stringify({ pages, number: new Date().getDate() })
           }
         ));
 
-        res.json((response as { data: any }).data);
+        // Add response validation
+        if (!response.ok) {
+          throw new Error(`ML service error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        res.json(data);
         return;
       } catch (err) {
         Logs.error("Analysis generation error:", err);
-        res.status(400).json({ error: 'Analysis failed' });
+        res.status(500).json({ error: 'Analysis failed' });
         return;
       }
     } catch (error) {
@@ -76,39 +81,42 @@ router.post(
 );
 
 router.post(
-  '/single',
+  '/page',
   decrementQuota,
   async (req: RequestWithApiKey, res: Response) => {
     try {
       if (!req.body || !req.body.page) {
         res.status(400).json({ error: "Invalid request body" });
+        return;
       }
-        console.log("Page:", req.body.page);
+      
+      if (!req.body.apiKey) {
+        res.status(401).json({ error: "Invalid API key" });
+        return;
+      }
+        // console.log("Page:", req.body.page);
         
-      const { content: { title, description, headers, keywords, url, body, mobile_friendly, structured_data, status_codes } } = req.body.page;
+      // const { content: { title, description, headers, keywords, url, body, mobile_friendly, structured_data, status_codes } } = req.body.page;
 
       try {
-        if (!req.body.apiKey) {
-          res.status(400).json({ error: "Missing API Key" });
-          return;
-        }
-
-        const response = await analysisWorker(fetch(
-          `${ML_SERVER_URL}/analyze`, {
+        const response: any = fetch(
+          `${ML_SERVER_URL}/analyze/single`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              // ...(req.header('x-api-key') && { 'x-api-key': req.header('x-api-key') }),
             },
-            body: JSON.stringify({ title, description, headers, keywords, url, body, mobile_friendly, structured_data, status_codes })
+            body: JSON.stringify({ content: req.body.page, number: new Date().getDate() })
+            // body: JSON.stringify({ title, description, headers, keywords, url, body, mobile_friendly, structured_data, status_codes })
           }
-        ));
+        );
 
-        res.json((response as { data: any }).data);
+        const data = await response.json();
+        res.json(data);
+
         return;
       } catch (err) {
         Logs.error("Analysis generation error:", err);
-        res.status(400).json({ error: 'Analysis failed' });
+        res.status(500).json({ error: 'Analysis failed' });
         return;
       }
     } catch (error) {

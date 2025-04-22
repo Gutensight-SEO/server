@@ -3,7 +3,7 @@
 import { Worker } from "worker_threads";
 
 
-const userWorker = (serviceName: string, params = null) => {
+export const userWorker = (serviceName: string, params = null) => {
     return new Promise((resolve, reject) => {
         const worker = new Worker("./user.worker.ts", {
             workerData: {
@@ -39,7 +39,7 @@ const userWorker = (serviceName: string, params = null) => {
 //     })
 // }
 
-const analysisWorker = (cb: any) => {
+export const analysisWorker = (cb: any) => {
     return new Promise((resolve, reject) => {
         const worker = new Worker("./analysis.worker.ts", {
             workerData: {
@@ -61,8 +61,3 @@ const analysisWorker = (cb: any) => {
 // notificationWorker
 
 
-export {
-    userWorker,
-    // postWorker,
-    analysisWorker
-};
