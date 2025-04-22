@@ -4,7 +4,7 @@ import { Logs } from "@/monitoring";
 import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
 import crypto from "crypto";
-import { encryptApiKey } from "@/utils";
+import { encryptApiKey, generateApiKey, hashApiKey } from "@/utils";
 import { omit } from "lodash";
 
 
@@ -120,9 +120,9 @@ export async function initializeDefaults() {
                 }
     
                 // Generate API credentials
-                const apiKey = crypto.randomBytes(16).toString('hex');
+                const apiKey = generateApiKey();
                 // encrypt api key
-                const key_hash = encryptApiKey(apiKey);
+                const key_hash = hashApiKey(apiKey);
                 
                 // Calculate dates
                 const startDate = new Date();
@@ -132,7 +132,8 @@ export async function initializeDefaults() {
                 const subscription = await SubscriptionModel.create({
                     userId: admin._id,
                     subscriptionPlanId: subscriptionPlan._id,
-                    apiKey: key_hash,
+                    apiKey: encryptApiKey(apiKey),
+                    apiKeyHash: key_hash,
                     startDate,
                     endDate,
                     totalApiRequests: subscriptionPlan.apiRequestQuota,

@@ -7,7 +7,7 @@ import { Logs } from "@/monitoring";
 import { ApiKeyModel, SubscriptionDocument, SubscriptionModel, SubscriptionPlanModel, SubscriptionPlanDocument } from "@/models";
 // import crypto from "crypto";
 import { omit } from "lodash";
-import { decryptApiKey, encryptApiKey, generateApiKey, VerifyPayment } from "@/utils";
+import { decryptApiKey, encryptApiKey, generateApiKey, hashApiKey, VerifyPayment } from "@/utils";
 
 // Update the interface to use Document type
 interface PopulatedSubscription extends Omit<SubscriptionDocument, 'subscriptionPlanId'> {
@@ -60,11 +60,11 @@ export const subscribe = async (
             // Generate API credentials
             const apiKey = generateApiKey();
             
-            // Encrypt for storage
+            // // Encrypt for storage
             const encryptedKey = encryptApiKey(apiKey);
             
             // Hash for lookups
-            const key_hash = encryptApiKey(apiKey);
+            const key_hash = hashApiKey(apiKey);
             
             // Calculate dates
             const startDate = new Date();
@@ -75,6 +75,8 @@ export const subscribe = async (
                 userId,
                 subscriptionPlanId,
                 apiKey: encryptedKey,
+                apiKeyHash: key_hash,
+                status: 'active',
                 startDate,
                 endDate,
                 totalApiRequests: subscriptionPlan.apiRequestQuota,
@@ -83,7 +85,7 @@ export const subscribe = async (
             });
 
             if (subscription) {
-                const key_hash = encryptApiKey(apiKey);
+                // const key_hash = hashApiKey(apiKey);
 
                 const savedApiKeys = await ApiKeyModel.create({
                     subscription_name: subscriptionPlan.name,
@@ -132,8 +134,11 @@ export const getSubscriptionDetails = async (userId: string, subscriptionId: str
         const endDate = new Date(subscription.endDate);
         const remainingDays = Math.ceil((endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
 
-        // Only try to decrypt if both keys exist
-        const apiKey = subscription.apiKey ? decryptApiKey(subscription.apiKey) : '';
+        // Only try to decrypt if key exist
+        const apiKey = decryptApiKey(subscription.apiKey);
+        // console.log("ENCRYPTED API KEY from sub details:", subscription.apiKey);
+        // console.log("DECRYPTED API KEY from sub details:", apiKey);
+        // console.log("RE-ENCRYPTED API KEY from sub details:", encryptApiKey(apiKey));
 
         return {
             statusCode: STATUS_CODES.SUCCESS.OK,

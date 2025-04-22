@@ -1,85 +1,73 @@
-/** @format */
-
+/** @format **/
 import crypto from 'crypto';
+import dotenv from 'dotenv';
 
-// Use crypto to derive a 32-byte key from the secret
-const deriveKey = (secret: string): Buffer => {
-  return crypto.pbkdf2Sync(
-    secret, // || 'default-secret-key',  // Fallback if env var not set
-    'salt',  // Constant salt for key derivation
-    100000,  // Number of iterations
-    32,      // Key length in bytes
-    'sha256' // Hash algorithm
-  );
-};
+dotenv.config();
 
-const ENCRYPTION_KEY = deriveKey(process.env.API_KEYS_SECRET!);
-const IV_LENGTH = 16;
-const SALT_LENGTH = 64;
+// Environment variables (ensure these are set in your .env file)
+const ENCRYPTION_KEY = process.env.API_ENCRYPTION_KEY!; // 32-byte hex string, e.g. "0123...af"
+const HMAC_SECRET   = process.env.API_HMAC_SECRET!;   // arbitrary-length secret
+const API_KEY_BYTES = 16; // Generates 32-character hex string
 
-// Hash API key for storage and comparison
-export const hashApiKey = (key: string): string => {
-  return crypto.createHash('sha256').update(key).digest('hex');
-};
+// Constants
+const ALGORITHM    = 'aes-256-gcm';
+const IV_LENGTH    = 12;                       // Recommended for GCM
+
+if (ENCRYPTION_KEY.length !== 64) {
+  throw new Error('API_ENCRYPTION_KEY must be a 32-byte hex string (64 characters)');
+}
+
+const keyBuffer = Buffer.from(ENCRYPTION_KEY, 'hex');
 
 // Generate secure random API key
-export const generateApiKey = (length: number = 32): string => {
-  return crypto.randomBytes(length).toString('hex');
+export const generateApiKey = (): string => {
+  return crypto.randomBytes(API_KEY_BYTES).toString('hex');
 };
 
-// Encrypt API key/secret before storing
-export const encryptApiKey = (text: string): string => {
-  try {
-    const salt = crypto.randomBytes(SALT_LENGTH);
-    const iv = crypto.randomBytes(IV_LENGTH);
-    
-    const cipher = crypto.createCipheriv('aes-256-gcm', ENCRYPTION_KEY, iv);
-    
-    let encrypted = cipher.update(text, 'utf8', 'hex');
-    encrypted += cipher.final('hex');
-    
-    const authTag = cipher.getAuthTag();
-    
-    return `${salt.toString('hex')}:${iv.toString('hex')}:${authTag.toString('hex')}:${encrypted}`;
-  } catch (error) {
-    console.error('Encryption error:', error);
-    throw new Error('Failed to encrypt API key');
+/**
+ * Encrypts plaintext with AES-256-GCM and returns a single string: iv:ciphertext:authTag
+ */
+export function encryptApiKey(rawKey: string): string {
+  const iv = crypto.randomBytes(IV_LENGTH);
+  const cipher = crypto.createCipheriv(ALGORITHM, keyBuffer, iv);
+  const encrypted = Buffer.concat([cipher.update(rawKey, 'utf8'), cipher.final()]);
+  const authTag = cipher.getAuthTag();
+
+  // Format: iv:cipherText:tag, all in hex
+  return [iv.toString('hex'), encrypted.toString('hex'), authTag.toString('hex')].join(':');
+}
+
+/**
+ * Decrypts the combined string and returns the original plaintext
+ */
+export function decryptApiKey(combined: string): string {
+  const [ivHex, encryptedHex, tagHex] = combined.split(':');
+  if (!ivHex || !encryptedHex || !tagHex) {
+    throw new Error('Invalid encrypted data format');
   }
-};
 
-// Decrypt API key/secret for sending to client
-export const decryptApiKey = (encryptedText: string | undefined | null): string | undefined => {
-  try {
-    if (!encryptedText) {
-      return;
-    }
+  const iv        = Buffer.from(ivHex, 'hex');
+  const encrypted = Buffer.from(encryptedHex, 'hex');
+  const authTag   = Buffer.from(tagHex, 'hex');
 
-    // Handle non-encrypted keys (legacy format)
-    if (!encryptedText.includes(':')) {
-      return;
-    }
+  const decipher = crypto.createDecipheriv(ALGORITHM, keyBuffer, iv);
+  decipher.setAuthTag(authTag);
+  const decrypted = Buffer.concat([decipher.update(encrypted), decipher.final()]);
 
-    const [salt, iv, authTag, encryptedData] = encryptedText.split(':');
-    
-    if (!salt || !iv || !authTag || !encryptedData) {
-      return; // Return if not in correct format
-    }
-    
-    const decipher = crypto.createDecipheriv(
-      'aes-256-gcm',
-      ENCRYPTION_KEY,
-      Buffer.from(iv, 'hex')
-    );
-    
-    decipher.setAuthTag(Buffer.from(authTag, 'hex'));
-    
-    let decrypted = decipher.update(encryptedData, 'hex', 'utf8');
-    decrypted += decipher.final('utf8');
-    
-    return decrypted;
-  } catch (error) {
-    console.error('Decryption error:', error);
-    return; // Return if decryption fails
-  }
-};
+  return decrypted.toString('utf8');
+}
 
+/**
+ * Computes a deterministic HMAC-SHA256 of the raw key for lookup
+ */
+export function hashApiKey(rawKey: string): string {
+  return crypto.createHmac('sha256', HMAC_SECRET)
+               .update(rawKey)
+               .digest('hex');
+}
+
+// Optionally, verify HMAC matches
+export function verifyApiKeyHash(rawKey: string, expectedHash: string): boolean {
+  const actual = hashApiKey(rawKey);
+  return crypto.timingSafeEqual(Buffer.from(actual, 'hex'), Buffer.from(expectedHash, 'hex'));
+}

@@ -4,7 +4,7 @@ import { Router, Request, Response } from 'express';
 import { decrementQuota } from '@/middlewares';
 import { analysisWorker } from '@/workers';
 import { Logs } from '@/monitoring';
-import { encryptApiKey } from '@/utils';
+import { encryptApiKey, hashApiKey } from '@/utils';
 import { ApiKeyModel } from '@/models';
 
 const router = Router();
@@ -129,15 +129,19 @@ router.post('/api-key', async (req: RequestWithApiKey, res: Response) => {
             return;
         }
 
-        const key_hash = encryptApiKey(apiKey);
+        const key_hash = hashApiKey(apiKey);
+        console.log("Key Hash:", key_hash);
+        // console.log("DECRYPTED API Key from SDK:", decryptApiKey(key_hash));
+        // console.log("DECRYPTED API Key from DB:", decryptApiKey("d49601d29da776c65f059bc8cc2ace35373c7249f8befb88e20d5eb3dbcc5f202cd2f085f55751a891c730f63a1b57f1f3b996e92480f2c2f231bc849d05e33d"));
         
         const foundAPIKey = await ApiKeyModel.findOne({ key_hash });
         if (!foundAPIKey) {
-            // console.log("API NOT FOUND!")
+            console.log("API NOT FOUND!")
             res.status(404).json({ error: "Invalid API Key" });
             return;
         }
         if (foundAPIKey.requests_remaining <= 0) {  
+          console.log("API QOUTA EXCEEDED!")
             res.status(401).json({ error: "Quota Exceeded" });
             return;
         }
