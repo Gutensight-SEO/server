@@ -3,7 +3,7 @@
 import { ApiKeyModel, SubscriptionModel, SubscriptionPlanModel, UserDocument, UserModel } from "@/models";
 import { Logs } from "@/monitoring";
 import { ZodSchema } from "@/schemas";
-import { GenerateToken, encryptApiKey } from "@/utils";
+import { GenerateToken, encryptApiKey, generateApiKey, hashApiKey } from "@/utils";
 import { STATUS_CODES } from "@/constants";
 import { omit } from "lodash";
 import crypto from "crypto";
@@ -64,10 +64,11 @@ export const register = async ({
             }
 
             // Generate API credentials
-            const apiKey = crypto.randomBytes(16).toString('hex');
+            const apiKey = generateApiKey();
             // const apiSecret = crypto.randomBytes(32).toString('hex');
+            const encryptedApiKey = encryptApiKey(apiKey);
             // hash api keys 
-            const key_hash = encryptApiKey(apiKey);
+            const apiKeyHash = hashApiKey(apiKey);
             
             // Calculate dates
             const startDate = new Date();
@@ -77,7 +78,8 @@ export const register = async ({
             const subscription = await SubscriptionModel.create({
                 userId: newUser._id,
                 subscriptionPlanId: subscriptionPlan._id,
-                apiKey: key_hash,
+                apiKey: encryptedApiKey,
+                apiKeyHash,
                 startDate,
                 endDate,
                 totalApiRequests: subscriptionPlan.apiRequestQuota,
@@ -94,7 +96,7 @@ export const register = async ({
                 const savedApiKeys = await ApiKeyModel.create({
                     subscription_name: subscriptionPlan.name,
                     subscription_id: String(subscription._id),
-                    key_hash,
+                    key_hash: apiKeyHash,
                     user_id: String(newUser._id),
                     requests_remaining: subscriptionPlan.apiRequestQuota,
                     created_at: new Date(),
