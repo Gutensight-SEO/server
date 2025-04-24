@@ -47,6 +47,8 @@ router.post(
       if (!validateApiKey(req, res)) return;
       if (!ensureMLServer(res)) return;
 
+      console.log("PAGES:", req.body.pages)
+
       const { pages } = req.body;
       if (!Array.isArray(pages) || pages.length === 0) {
         res.status(400).json({ error: 'Invalid request body: pages must be a non-empty array' });
