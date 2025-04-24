@@ -93,6 +93,7 @@ export const register = async ({
                 newUser.subscription.push(String(subscriptionPlan._id));
                 await newUser.save();
 
+                console.log("saving API KEY record...")
                 const savedApiKeys = await ApiKeyModel.create({
                     subscription_name: subscriptionPlan.name,
                     subscription_id: String(subscription._id),
